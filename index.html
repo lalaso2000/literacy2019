@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- webページ設定 -->
+    <meta charset="UTF-8">
+    <title>リテラシー2019 テストページ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/marx/2.0.4/marx.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- obniz設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
+    <script src="https://unpkg.com/obniz@2.2.0/obniz.js"></script>
+</head>
+
+<body>
+    <main>
+        <h1>ものづくりリテラシー2019 テストページ</h1>
+        <!-- obnizのデバッグ情報を表示 -->
+        <div id="obniz-debug"></div>
+        <p>テスト用のページです．</p>
+        <p>接続中のobniz: <strong id="obniz-id">No Connection...</strong></p>
+        <div>
+            Lチカっぽいなにか → <button type="button" class="btn btn-primary" id="led-state">WAITING</button>
+        </div>
+    </main>
+
+    <script>
+        console.log('console check.');
+        // obnizに接続
+        // OBNIZ_ID_HEREにしておくと実行時にIDを聞いてくれる
+        var obniz = new Obniz("OBNIZ_ID_HERE");
+        obniz.onconnect = async function () {
+            // webページにidを表示する
+            $("#obniz-id").text(obniz.id);
+            // 1秒ほど待つ
+            await obniz.wait(1000);
+            // obnizの状態
+            var WAITING = 0
+            var RUNNING = 1
+            var state = WAITING
+            // ボタンに応じて状態を変える
+            $("#led-state").click(function () {
+                if (state == WAITING) {
+                    state = RUNNING;
+                    $("#led-state").text("RUNNING");
+                }
+                else {
+                    state = WAITING;
+                    $("#led-state").text("WAITING");
+                }
+            })
+            // LEDを用意する
+            var led = obniz.wired("LED", { anode: 0, cathode: 1 });
+            // 付いたり消えたりする
+            var flag = false;
+            var time = 1000.0;
+            // 無限ループ
+            while (true) {
+                // 接続が切れたら抜ける
+                if (obniz.connectionState != "connected") {
+                    console.log('connection close!');
+                    break;
+                }
+                // waitingの間はledをoffにして待つ
+                if (state == WAITING) {
+                    led.off();
+                    await obniz.wait(10);
+                    continue;
+                }
+                // runningの時．．．
+                // timeをだんだん短くする
+                time = time / 1.1;
+                // 10より小さくなったらwaitingに戻す
+                if (time < 10) {
+                    state = WAITING;
+                    time = 1000.0;
+                    flag = false;
+                    led.off();
+                    $("#led-state").text("WAITING");
+                    continue;
+                }
+                // flagを切り替え
+                flag = !flag;
+                // timeだけ点灯 or 消灯
+                if (flag) {
+                    led.on();
+                }
+                else {
+                    led.off();
+                }
+                // timeだけ待つ
+                await obniz.wait(Math.round(time));
+            }
+        }
+    </script>
+</body>
+
+</html>
