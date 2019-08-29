@@ -15,6 +15,10 @@
 
 <body>
     <div class="wrapper">
+        <header>
+            <a href="../index.html" id="header-text">ものづくりリテラシー2019</a>
+        </header>
+
         <main>
             <h1>例題1</h1>
             <!-- obnizのデバッグ情報を表示 -->
@@ -26,16 +30,18 @@
                 問題に正解すると光るよ！<br>
                 (obnizがonlineじゃないと問題が答えられません。)
             </p>
-            <img src="../image/obniz-00_b.png" alt="Lチカのブレッドボード" title="Lチカのブレッドボード" height="400">
-            <img src="../image/obniz-00_c.png" alt="Lチカの回路図" title="Lチカの回路図" height="400">
+            <img src="../image/obniz-00_b.png" alt="Lチカのブレッドボード" title="Lチカのブレッドボード">
+            <img src="../image/obniz-00_c.png" alt="Lチカの回路図" title="Lチカの回路図">
 
             <h2>問題</h2>
             <p>
-                岐阜高専のスクールカラーは、
+                岐阜高専のスクールカラーは
                 <span style="font-size: 16pt; color: rgb(0, 167, 123)">みどり色</span>
                 である。
-                <button type="button" class="btn btn-primary" id="true">○</button>
-                <button type="button" class="btn btn-danger" id="false">×</button>
+                <div id="maru-batsu">
+                    <button type="button" class="btn btn-primary" id="true">○</button>
+                    <button type="button" class="btn btn-danger" id="false">×</button>
+                </div>
             </p>
 
             <span id="answer" style="visibility: hidden">

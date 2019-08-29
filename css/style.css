@@ -1,6 +1,7 @@
 .wrapper{
     min-height: 100vh;
     position: relative;
+    padding-top: 35px;
     padding-bottom: 120px;
     box-sizing: border-box;
 }
@@ -20,6 +21,28 @@ h2 {
     margin: 36px 0px 8px 0px;
 }
 
+#header-text{
+    padding: 16px;
+    color: white;
+}
+
+img {
+    width: auto;
+    height: auto;
+    max-height: 400px;
+    max-width: 100%;
+}
+
+header{
+    width: 100%;
+    background-color: darkorange;
+    color: white;
+    padding: 5px 0;
+
+    position: absolute;
+    top: 0;
+}
+
 footer{
     width: 100%;
     background-color: rgb(44, 45, 54);
@@ -29,4 +52,24 @@ footer{
 
     position: absolute;
     bottom: 0;
+}
+
+#maru-batsu {
+    text-align: center;
+}
+
+#true{
+    margin: 4px;
+    padding: 4px;
+    width: 48%;
+    max-width: 100%;
+    min-width: 200px;
+}
+
+#false{
+    margin: 4px;
+    padding: 4px;
+    width: 48%;
+    max-width: 100%;
+    min-width: 200px;
 }
