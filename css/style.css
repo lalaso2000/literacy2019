@@ -1,0 +1,14 @@
+body {
+    margin: 8px 16px 8px 16px;
+}
+
+h1 {
+    text-align: center;
+    border-bottom: 1px;
+    border-bottom-color: rgb(226, 226, 226);
+    border-bottom-style: solid;
+}
+
+h2 {
+    margin: 36px 0px 8px 0px;
+}
