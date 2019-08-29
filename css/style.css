@@ -1,3 +1,10 @@
+.wrapper{
+    min-height: 100vh;
+    position: relative;
+    padding-bottom: 120px;
+    box-sizing: border-box;
+}
+
 body {
     margin: 8px 16px 8px 16px;
 }
@@ -11,4 +18,15 @@ h1 {
 
 h2 {
     margin: 36px 0px 8px 0px;
+}
+
+footer{
+    width: 100%;
+    background-color: rgb(44, 45, 54);
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+
+    position: absolute;
+    bottom: 0;
 }
