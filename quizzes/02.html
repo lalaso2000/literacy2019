@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- webページ設定 -->
+    <meta charset="UTF-8">
+    <title>リテラシー2019 例題2</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- obniz設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
+    <script src="https://unpkg.com/obniz@2.2.0/obniz.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <header>
+            <a href="../index.html" id="header-text">ものづくりリテラシー2019</a>
+        </header>
+
+        <main>
+            <h1>例題2</h1>
+            <!-- obnizのデバッグ情報を表示 -->
+            <div id="obniz-debug"></div>
+
+            <h2>回路図</h2>
+            <p>
+                まずは回路を組みましょう。<br>
+                問題に正解すると音がなるよ！<br>
+                (obnizがonlineじゃないと問題が答えられません。)
+            </p>
+            <img src="../image/obniz-02_b.png" alt="ブザーのブレッドボード" title="ブザーのブレッドボード" height="400">
+            <img src="../image/obniz-02_c.png" alt="ブザーの回路図" title="ブザーの回路図" height="400">
+
+            <h2>問題</h2>
+            <p>
+                岐阜高専の校歌の名前は
+                「<span style="font-size: 16pt">〇〇〇〇</span>のごと」
+                である。<br>
+                <input type="text" id="answer-box" placeholder="ひらがなで入力してね">
+                <button type="button" class="btn btn-primary" id="answer-btn">答える！</button>
+            </p>
+
+            <span id="answer" style="visibility: hidden">
+                <h2>解説</h2>
+                <p>
+                    正解は
+                    「<span style="font-size: 16pt; color: rgb(179, 66, 74)">わかあゆ</span>のごと」
+                    （若鮎のごと）だよ！<br>
+                    かっこいい曲だね！
+                </p>
+            </span>
+        </main>
+
+        <footer>
+            <p>
+                NIT, Gifu College | 2019
+            </p>
+        </footer>
+    </div>
+
+
+
+    <script>
+        console.log('console check.');
+        // obnizに接続
+        // OBNIZ_ID_HEREにしておくと実行時にIDを聞いてくれる
+        var obniz = new Obniz("OBNIZ_ID_HERE");
+        obniz.onconnect = async function () {
+            // スピーカーを用意する
+            var speaker = obniz.wired("Speaker", { signal: 2, gnd: 3 });
+
+            // 答えるボタンを押した時
+            $("#answer-btn").click(async function () {
+                // テキストボックスの中身を取得
+                const answer_text = document.getElementById("answer-box").value;
+                // もし答えが正解なら
+                if (answer_text === "わかあゆ") {
+                    // 音の定義
+                    function note(frequency, length) {
+                        this.frequency = frequency;
+                        this.length = length;
+                    }
+                    // 楽譜（のようなもの）
+                    const notes = [
+                        new note(831, 0.5 / 4.0 * 3.0),
+                        new note(880, 0.5 / 4.0),
+                        new note(988, 0.95),
+                        new note(0, 0.05),
+                        new note(831, 0.45),
+                        new note(0, 0.55),
+                        new note(1109, 0.22),
+                        new note(0, 0.03),
+                        new note(1109, 0.45),
+                        new note(0, 0.05),
+                        new note(1109, 0.22),
+                        new note(0, 0.03),
+                        new note(988, 0.45),
+                        new note(0, 0.05),
+                        new note(988, 0.45),
+                        new note(0, 0.05),
+                        new note(998, 0.70),
+                        new note(0, 0.05),
+                        new note(1109, 0.2),
+                        new note(0, 0.05),
+                        new note(831, 0.45),
+                        new note(0, 0.05),
+                        new note(740, 0.45),
+                        new note(0, 0.05),
+                        new note(659, 1.45),
+                        new note(0, 0.05)
+                    ]
+                    // 音を鳴らす
+                    // tips: foreachを使うと、なり始めと同時に解説が出てしまう（非同期関数を使わざるを得なくなるため）
+                    for (var i = 0; i < notes.length; i++) {
+                        // frequencyが0なら休符
+                        if (notes[i].frequency == 0) {
+                            speaker.stop();
+                        }
+                        // それ以外は音を鳴らす
+                        else {
+                            speaker.play(notes[i].frequency);
+                        }
+                        // 長さ分待つ
+                        await obniz.wait(Math.round(notes[i].length * 1000));
+                    }
+                    // 最後に音を止める
+                    speaker.stop();
+                    // 終わったら解説を表示する
+                    const answer = document.getElementById("answer");
+                    answer.style.visibility = "visible";
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
