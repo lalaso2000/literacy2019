@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- webページ設定 -->
+    <meta charset="UTF-8">
+    <title>リテラシー2019 例題1</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- obniz設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
+    <script src="https://unpkg.com/obniz@2.2.0/obniz.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <header>
+            <a href="../index.html" id="header-text">ものづくりリテラシー2019</a>
+        </header>
+
+        <main>
+            <h1>
+                <!-- クイズタイトル -->
+                例題１
+                <!-- クイズのタイトルここまで -->
+            </h1>
+
+            <!-- obnizのデバッグ情報を表示 -->
+            <div id="obniz-debug"></div>
+
+            <h2>回路図</h2>
+            <p>
+                まずは回路を組みましょう。<br>
+                問題に正解すると光るよ！<br>
+                (obnizがonlineじゃないと問題が答えられません。)
+            </p>
+            <!-- 回路図のファイル名とタイトルを記入 -->
+            <img src="../image/obniz-00_b.png" title="Lチカのブレッドボード">
+            <img src="../image/obniz-00_c.png" title="Lチカの回路図">
+
+            <h2>問題</h2>
+            <p>
+                <!-- ここに問題を書く -->
+                岐阜高専のスクールカラーは
+                <span style="font-size: 16pt; color: rgb(0, 167, 123)">みどり色</span>
+                である。
+                <div id="maru-batsu">
+                    <button type="button" class="btn btn-primary" id="true">○</button>
+                    <button type="button" class="btn btn-danger" id="false">×</button>
+                </div>
+                <!-- ここまで問題 -->
+            </p>
+
+            <span id="answer" style="visibility: hidden">
+                <h2>解説</h2>
+                <p>
+                    <!-- ここに解説を書く -->
+                    岐阜高専のスクールカラーは
+                    <span style="font-size: 16pt; color: rgb(179, 66, 74)">えんじ色</span>
+                    だよ！<br>
+                    初代校長先生の母校の壁の色なんだって！
+                    <!-- ここまで解説 -->
+                </p>
+            </span>
+        </main>
+
+        <footer>
+            <p>
+                NIT, Gifu College | 2019
+            </p>
+        </footer>
+    </div>
+
+
+
+    <script>
+        console.log('console check.');
+        // obnizに接続
+        // OBNIZ_ID_HEREにしておくと実行時にIDを聞いてくれる
+        var obniz = new Obniz("OBNIZ_ID_HERE");
+        obniz.onconnect = async function () {
+            // LEDを用意する
+            var led = obniz.wired("LED", { anode: 0, cathode: 1 });
+            led.off();
+            // 正解のボタンを押すと光る
+            $("#false").click(async function () {
+                // 3回ピカピカする
+                var count = 3;
+                while (count > 0) {
+                    console.log(count);
+                    // 接続が切れたら抜ける
+                    if (obniz.connectionState != "connected") {
+                        console.log('connection close!');
+                        break;
+                    }
+                    led.on();
+                    await obniz.wait(250);
+                    led.off();
+                    await obniz.wait(250);
+                    // カウントダウン
+                    count -= 1;
+                }
+                // 終わったら解説を表示する
+                const answer = document.getElementById("answer");
+                answer.style.visibility = "visible";
+            });
+        }
+    </script>
+</body>
+
+</html>
