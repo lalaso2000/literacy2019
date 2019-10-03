@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- webページ設定 -->
+    <meta charset="UTF-8">
+    <title>大垣市こどもIT講座</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- obniz設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
+    <script src="https://unpkg.com/obniz@2.2.0/obniz.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <header>
+            <a href="#" id="header-text">ものづくりリテラシー2019</a>
+        </header>
+
+        <main>
+            <h1>
+                <!-- クイズタイトル -->
+                問題1-1
+                <!-- クイズのタイトルここまで -->
+            </h1>
+
+            <!-- obnizのデバッグ情報を表示 -->
+            <div id="obniz-debug"></div>
+
+            <h2>回路図</h2>
+            <p>
+                下の文章の
+                <span style="font-size: 16pt; color: rgb(0, 167, 123)">□</span>
+                に当てはまる語句を選んでね<br>
+                問題に正解すると正解音が鳴るよ！<br>
+                (obnizがonlineじゃないと問題が答えられません。)
+            </p>
+            <!-- 回路図のファイル名とタイトルを記入 -->
+            <img src="../image/g4_b.png" title="Lチカのブレッドボード">
+            <img src="../image/g4_c.png" title="Lチカの回路図">
+
+            <h2>問題</h2>
+            <p>
+                <!-- ここに問題を書く -->
+                緯度は
+                <span style="font-size: 16pt; color: rgb(0, 167, 123)">□</span>
+                を0度とした角度で、経度は
+                <span style="font-size: 16pt; color: rgb(0, 167, 123)">□</span>
+                を0度とした角度である。
+                <div id="maru-batsu">
+                    <button type="button" class="btn btn-primary false">時刻変更線/本初子午線</button>
+                    <button type="button" class="btn btn-primary false">本初子午線/赤道</button>
+                    <button type="button" class="true btn btn-primary">赤道/本初子午線</button>
+                    <button type="button" class="btn btn-primary false">時刻変更線/赤道</button>
+                </div>
+                <!-- ここまで問題 -->
+            </p>
+
+            <span id="answer" style="visibility: hidden">
+                <h2>解説</h2>
+                <p>
+                    <!-- ここに解説を書く -->
+                    緯度は
+                    <span style="font-size: 16pt; color: rgb(200, 0, 0)">赤道</span>
+                    を0度とした角度,
+                    経度は
+                    <span style="font-size: 16pt; color: rgb(200, 0, 0)">本初子午線</span>
+                    を０度とした角度です。
+                    <br>
+                    <!-- ここまで解説 -->
+                </p>
+            </span>
+        </main>
+
+        <footer>
+            <p>
+                NIT, Gifu College | 2019
+            </p>
+        </footer>
+    </div>
+
+
+
+    <script>
+        console.log('console check.');
+        // obnizに接続
+        // OBNIZ_ID_HEREにしておくと実行時にIDを聞いてくれる
+        var obniz = new Obniz("OBNIZ_ID_HERE");
+        obniz.onconnect = async function () {
+            // speakerを用意する
+            var speaker = obniz.wired("Speaker", { signal: 0, gnd: 1 });
+            // ボタンを押すと音が鳴る
+            $(".false").click(async function () {
+                console.log("false click!");
+                // ドを鳴らす
+                speaker.play(494);
+                await obniz.wait(100);
+                speaker.stop();
+                await obniz.wait(50);
+
+                speaker.play(494);
+                await obniz.wait(100);
+                speaker.stop();
+            });
+            $(".true").click(async function () {
+                console.log("true click!");
+                // シとソを鳴らす
+                speaker.play(988);
+                await obniz.wait(100);
+                speaker.play(784);
+                await obniz.wait(100);
+                speaker.stop();
+                // 終わったら解説を表示する
+                const answer = document.getElementById("answer");
+                answer.style.visibility = "visible";
+            });
+        }
+    </script>
+</body>
+
+</html>
