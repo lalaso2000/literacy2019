@@ -4,10 +4,13 @@
     padding-top: 35px;
     padding-bottom: 120px;
     box-sizing: border-box;
+    background-image: url(../image/bg.png);
+    background-size: cover;
 }
 
 main {
     margin: 8px 16px 8px 16px;
+    color: rgb(63, 36, 0);
 }
 
 h1 {
