@@ -7,6 +7,7 @@
     <title>大垣市こどもIT講座</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" type="text/css" href="../css/literacy_q5.css">
     <!-- obniz設定 -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
@@ -22,7 +23,7 @@
         <main>
             <h1>
                 <!-- クイズタイトル -->
-                例題１
+                ここの緯度と経度はなに？
                 <!-- クイズのタイトルここまで -->
             </h1>
 
@@ -32,22 +33,34 @@
             <h2>回路図</h2>
             <p>
                 まずは回路を組みましょう。<br>
-                問題に正解すると光るよ！<br>
                 (obnizがonlineじゃないと問題が答えられません。)
             </p>
             <!-- 回路図のファイル名とタイトルを記入 -->
-            <img src="../image/g5_b.png" title="ブレッドボード">
-            <img src="../image/g5_c.png" title="回路図">
+            <img src="../image/g5_b.png" width="420" title="サーボのブレッドボード">
+            <img src="../image/g5_c.png" width="280" title="サーボの回路図">
 
+            <hr>
             <h2>問題</h2>
             <p>
                 <!-- ここに問題を書く -->
-                岐阜高専のスクールカラーは
-                <span style="font-size: 16pt; color: rgb(0, 167, 123)">みどり色</span>
-                である。
-                <div id="maru-batsu">
-                    <button type="button" class="btn btn-primary" id="true">○</button>
-                    <button type="button" class="btn btn-danger" id="false">×</button>
+                ここの緯度と経度をあわせよう!!<br>
+                緯度経度が近くなるほどメーターがまっすぐになるよ!<br>
+                メーターはチェックがついているものを表すよ<br>
+                [ヒント : QRコードをさがすときにみたよ]
+                <!-- 緯度を合わせる表示 -->
+                <div id="btn-ans">
+                    <label><input type="radio" class="check" name="servo" id="select_servo_ido" checked> 緯度
+                        (北緯)</label><br>
+                    <button type="button" class="btn btn-danger" id="ido_dec">減らす</button>
+                    <div id="display_ido" class="pad">0</div>
+                    <button type="button" class="btn btn-primary" id="ido_inc">増やす</button>
+                </div>
+                <!-- 経度を合わせる表示 -->
+                <div id="btn-ans">
+                    <label><input type="radio" class="check" name="servo" id="select_servo_keido"> 経度 (東経)</label><br>
+                    <button type="button" class="btn btn-danger" id="keido_dec">減らす</button>
+                    <div id="display_keido" class="pad">0</div>
+                    <button type="button" class="btn btn-primary" id="keido_inc">増やす</button>
                 </div>
                 <!-- ここまで問題 -->
             </p>
@@ -56,11 +69,15 @@
                 <h2>解説</h2>
                 <p>
                     <!-- ここに解説を書く -->
-                    岐阜高専のスクールカラーは
-                    <span style="font-size: 16pt; color: rgb(179, 66, 74)">えんじ色</span>
+                    ここの座標は、正確には
+                    <span style="font-size: 16pt; color: rgb(80, 209, 101)">北緯 35.367577、東経 136.639467</span>
                     だよ！<br>
-                    初代校長先生の母校の壁の色なんだって！
+                    この数字はすごく細かくなっているんだ！<br>
                     <!-- ここまで解説 -->
+                </p>
+                <p>
+                    鍵は
+                    <span id="key">80</span>だよ！
                 </p>
             </span>
         </main>
@@ -75,37 +92,107 @@
 
 
     <script>
-        console.log('console check.');
-        // obnizに接続
-        // OBNIZ_ID_HEREにしておくと実行時にIDを聞いてくれる
-        var obniz = new Obniz("OBNIZ_ID_HERE");
-        obniz.onconnect = async function () {
-            // LEDを用意する
-            var led = obniz.wired("LED", { anode: 0, cathode: 1 });
-            led.off();
-            // 正解のボタンを押すと光る
-            $("#false").click(async function () {
-                // 3回ピカピカする
-                var count = 3;
-                while (count > 0) {
-                    console.log(count);
-                    // 接続が切れたら抜ける
-                    if (obniz.connectionState != "connected") {
-                        console.log('connection close!');
-                        break;
+        // Webページ上の処理を行う
+        window.onload = function () {
+            var servo_ido = document.getElementById("select_servo_ido");
+            var servo_keido = document.getElementById("select_servo_keido");
+            var disp_ido = document.getElementById("display_ido");
+            var disp_keido = document.getElementById("display_keido");
+            var countUp_ido = document.getElementById("ido_inc");
+            var countDown_ido = document.getElementById("ido_dec");
+            var countUp_keido = document.getElementById("keido_inc");
+            var countDown_keido = document.getElementById("keido_dec");
+            var count_ido = 0;
+            var count_keido = 0;
+
+            countUp_ido.onclick = function () {
+                count_ido += 1;
+                if (count_ido > 90) count_ido = 90;
+                disp_ido.innerHTML = count_ido;
+            }
+            countUp_ido.ondblclick = function () {
+                count_ido += 8;
+                if (count_ido > 90) count_ido = 90;
+                disp_ido.innerHTML = count_ido;
+            }
+            countDown_ido.onclick = function () {
+                count_ido -= 1;
+                if (count_ido < 0) count_ido = 0;		//>
+                disp_ido.innerHTML = count_ido;
+            }
+            countDown_ido.ondblclick = function () {
+                count_ido -= 8;
+                if (count_ido < 0) count_ido = 0;		//>
+                disp_ido.innerHTML = count_ido;
+            }
+            countUp_keido.onclick = function () {
+                count_keido += 1;
+                if (count_keido > 180) count_keido = 180;
+                disp_keido.innerHTML = count_keido;
+            }
+            countUp_keido.ondblclick = function () {
+                count_keido += 8;
+                if (count_keido > 180) count_keido = 180;
+                disp_keido.innerHTML = count_keido;
+            }
+            countDown_keido.onclick = function () {
+                count_keido -= 1;
+                if (count_keido < 0) count_keido = 0;			//>
+                disp_keido.innerHTML = count_keido;
+            }
+            countDown_keido.ondblclick = function () {
+                count_keido -= 8;
+                if (count_keido < 0) count_keido = 0;			//>
+                disp_keido.innerHTML = count_keido;
+            }
+
+
+            console.log('console check.');
+            // obnizに接続
+            // OBNIZ_ID_HEREにしておくと実行時にIDを聞いてくれる
+            var obniz = new Obniz("OBNIZ_ID_HERE");
+            obniz.onconnect = async function () {
+
+
+                // サーボを用意する
+                var servoMotor = obniz.wired("ServoMotor", { signal: 0, vcc: 1, gnd: 2 });
+                var servo_angle = 0;
+                var angle_rate = 0;
+                servoMotor.range = { min: 0.6, max: 2.3 };
+                servoMotor.angle(0);
+                $(".btn").click(async function () {
+                    angle_rate = 0;
+                    if (servo_ido.checked) {
+                        if (count_ido > 35) {
+                            angle_rate = (35 - count_ido) * (90 / 55);
+                        }
+                        else if (count_ido < 35) {
+                            angle_rate = (35 - count_ido) * (90 / 35);
+                        }
+                        servo_angle = 90 - angle_rate;
+                        servoMotor.angle(servo_angle);
                     }
-                    led.on();
-                    await obniz.wait(250);
-                    led.off();
-                    await obniz.wait(250);
-                    // カウントダウン
-                    count -= 1;
-                }
-                // 終わったら解説を表示する
-                const answer = document.getElementById("answer");
-                answer.style.visibility = "visible";
-            });
-        }
+                    if (servo_keido.checked) {
+                        if (count_keido > 136) {
+                            angle_rate = (136 - count_keido) * (90 / 44);
+                        }
+                        else if (count_keido < 136) {
+                            angle_rate = (136 - count_keido) * (90 / 136);
+                        }
+                        servo_angle = 90 - angle_rate;
+                        console.log("angle", servo_angle);
+                        servoMotor.angle(servo_angle);
+                    }
+
+                    if (count_ido == 35 && count_keido == 136) {
+                        const answer = document.getElementById("answer");
+                        answer.style.visibility = "visible";
+                    }
+                });
+
+
+            }
+        };
     </script>
 </body>
 

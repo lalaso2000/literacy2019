@@ -1,0 +1,72 @@
+/* header {
+    padding : 5px 15px;
+    background-color: orange;
+    color : white;
+    font-size: 18px
+}
+
+footer {
+    padding: 20px;
+    background-color: #222222;
+    text-align: center;
+    color: white;
+}
+
+main {
+    margin : 20px;
+}
+
+h1 {
+    margin : 30px;
+    text-align: center;
+    font-weight: bold;
+}
+
+h2 {
+    margin : 10px;
+    font-weight: bolder;
+}
+
+/*段落の設定*/
+/* p {
+    padding : 2px;
+    padding-left: 20px;
+}
+
+img {
+    padding : 20px;
+} */
+
+
+/*問題の解答欄のデザイン*/
+#btn-ans {
+    background-color: whitesmoke;
+    background-clip: padding-box;
+    margin: 5px;
+    margin-left: 10px;
+    padding: 15px 25px 15px 25px;
+    display: block;
+}
+
+/*緯度経度の数字の大きさ*/
+.pad {
+    padding: 0px 40px 0px 40px;
+    display: inline-block;
+    font-size: 40px;
+}
+
+/*ボタンの形*/
+button {
+    width: 100px;
+    height: 40px;
+}
+
+/*"緯度""経度"の文字の大きさ*/
+label {
+    font-size: 25px;
+}
+
+/*ラジオボタンの大きさ*/
+input#select_servo {
+    transform: scale(1.5);
+}
