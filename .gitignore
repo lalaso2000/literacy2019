@@ -64,3 +64,6 @@ $RECYCLE.BIN/
 !.vscode/launch.json
 !.vscode/extensions.json
 
+
+quizzes/*
+!quizzes/G*.html
