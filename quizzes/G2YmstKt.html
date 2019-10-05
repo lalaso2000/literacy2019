@@ -22,7 +22,7 @@
         <main>
             <h1>
                 <!-- クイズタイトル -->
-                例題１
+                Question2
                 <!-- クイズのタイトルここまで -->
             </h1>
 
@@ -31,35 +31,76 @@
 
             <h2>回路図</h2>
             <p>
-                まずは回路を組みましょう。<br>
-                問題に正解すると光るよ！<br>
+                まずは回路を組もう<br>
+                問題に正解すると、ゴールに必要な番号がわかるよ！<br>
                 (obnizがonlineじゃないと問題が答えられません。)
             </p>
+
             <!-- 回路図のファイル名とタイトルを記入 -->
-            <img src="../image/g2_b.png" title="ブレッドボード">
-            <img src="../image/g2_c.png" title="回路図">
+            <img src="../image/g2_diagram.jpg" title="カラーセンサの回路図" style="width: 300pt; height: 300pt;">
+            <br>
+
+            <img src="../image/g2_circuit.jpg" title="回路" style="width: 296pt; height: 113pt;"><br>
 
             <h2>問題</h2>
             <p>
                 <!-- ここに問題を書く -->
-                岐阜高専のスクールカラーは
-                <span style="font-size: 16pt; color: rgb(0, 167, 123)">みどり色</span>
-                である。
-                <div id="maru-batsu">
-                    <button type="button" class="btn btn-primary" id="true">○</button>
-                    <button type="button" class="btn btn-danger" id="false">×</button>
+
+                <div style="border-style: solid; border-width: 1px;">
+                    下の
+                    <span style="font-size: 16pt; color: rgb(255,72,72)">赤</span>、
+                    <span style="font-size: 16pt; color: rgb(72,72,255)">青</span>、
+                    <span style="font-size: 16pt; color: rgb(0,184,26)">緑</span>、
+                    <span style="font-size: 16pt; color: rgb(255,208,26)">黄色</span>
+                    の4色のうち、光の三原色に含まれない色はどれか。<br>
+                    含まれないと思う色にセンサを近づけてね。<br>
+                </div><br>
+
+
+                <div>
+                    <img src="../image/g2_red.jpg" style="width: 200pt; height: 200pt;">
+                    <img src="../image/g2_blue.jpg" style="width: 200pt; height: 200pt;">
+                    <img src="../image/g2_green.jpg" style="width: 200pt; height: 200pt;">
+                    <img src="../image/g2_yellow.jpg" style="width: 200pt; height: 200pt;">
+                </div><br>
+
+                <div style="border-style: dashed; border-width: 1px;">
+                    クイズに答える前に、白い部分にセンサを向けて<br>
+                    <span style="color: rgb(255,82,90)">「白いところで押す」</span>
+                    ボタンを押してね<br>
                 </div>
+
+                <div id="maru-batsu">
+                    <br>
+                    <button type="button" class="btn btn-danger btn-lg" id="true">1.白いところで押す</button>
+                    <button type="button" class="btn btn-info btn-lg" id="false">2.押</button>
+                </div>
+
+
+
                 <!-- ここまで問題 -->
             </p>
+
 
             <span id="answer" style="visibility: hidden">
                 <h2>解説</h2>
                 <p>
                     <!-- ここに解説を書く -->
-                    岐阜高専のスクールカラーは
-                    <span style="font-size: 16pt; color: rgb(179, 66, 74)">えんじ色</span>
-                    だよ！<br>
-                    初代校長先生の母校の壁の色なんだって！
+
+                    光の三原色は
+                    <span style="font-size: 16pt; color: rgb(255,72,72)">赤</span>、
+                    <span style="font-size: 16pt; color: rgb(72,72,255)">青</span>、
+                    <span style="font-size: 16pt; color: rgb(0,184,26)">緑</span>、
+                    の3色のことを指しているよ！<br>
+                    <img src="../image/g2_rgb.jpg" style="width: 200pt; height: 200pt;"><br>
+
+                    この3色が混ざると明るくなって白に近づいていくよ！<br>
+
+                    <div style="text-align: center">
+                        G2 : <span id="key">111</span>
+                    </div>
+
+
                     <!-- ここまで解説 -->
                 </p>
             </span>
@@ -75,37 +116,70 @@
 
 
     <script>
+
         console.log('console check.');
         // obnizに接続
         // OBNIZ_ID_HEREにしておくと実行時にIDを聞いてくれる
         var obniz = new Obniz("OBNIZ_ID_HERE");
         obniz.onconnect = async function () {
-            // LEDを用意する
-            var led = obniz.wired("LED", { anode: 0, cathode: 1 });
-            led.off();
-            // 正解のボタンを押すと光る
-            $("#false").click(async function () {
-                // 3回ピカピカする
-                var count = 3;
-                while (count > 0) {
-                    console.log(count);
-                    // 接続が切れたら抜ける
-                    if (obniz.connectionState != "connected") {
-                        console.log('connection close!');
-                        break;
-                    }
-                    led.on();
-                    await obniz.wait(250);
-                    led.off();
-                    await obniz.wait(250);
-                    // カウントダウン
-                    count -= 1;
+            var colorSens = obniz.wired("S11059", { vcc: 0, sda: 1, scl: 2, gnd: 3 });
+            var ready = false;
+            var RED, GREEN, BLUE;
+
+            //白を読み取る
+            $("#true").click(async function () {
+                colorSens.init(1, 2);
+                var ret = await colorSens.getVal(); // 各色の値を取得
+                console.log("getVal:" + ret); // 取得した配列を表示
+                var red = ret[0]; // 赤色のレベルを変数redへ代入
+                var green = ret[1]; // 緑色のレベルを変数greenへ代入
+                var blue = ret[2];  // 青色のレベルを変数blueへ代入
+                var ir = ret[3];    // 赤外線のレベルを変数irへ代入
+
+                if (red >= 2000 || green >= 2000 || blue >= 2000) {
+
+                    window.alert("もう一度やり直してね\n");
                 }
-                // 終わったら解説を表示する
-                const answer = document.getElementById("answer");
-                answer.style.visibility = "visible";
+
+                else {
+                    RED = ret[0] / 2;  //redのしきい値
+                    GREEN = ret[1] / 2; //greenのしきい値
+                    BLUE = ret[2] / 3 * 2;//blueのしきい値
+
+                    ready = true;
+                }
+
+
+            });
+
+
+            // 押すのボタンを押すとコンソールにセンサの取得値を表示
+            $("#false").click(async function () {
+
+                if (ready == true) {
+                    colorSens.init(1, 2);
+                    var ret = await colorSens.getVal(); // 各色の値を取得
+                    console.log("getVal:" + ret); // 取得した配列を表示
+                    var red = ret[0]; // 赤色のレベルを変数redへ代入
+                    var green = ret[1]; // 緑色のレベルを変数greenへ代入
+                    var blue = ret[2];  // 青色のレベルを変数blueへ代入
+                    var ir = ret[3];    // 赤外線のレベルを変数irへ代入
+                }
+
+                else {
+                    window.alert("準備がまだだよ\n白を読み取ってね\n");
+                }
+
+                if (ret[0] >= RED & ret[1] >= GREEN && ret[2] <= BLUE) {
+                    // 終わったら解説を表示する
+                    const answer = document.getElementById("answer");
+                    answer.style.visibility = "visible";
+                }
+
             });
         }
+
+
     </script>
 </body>
 
