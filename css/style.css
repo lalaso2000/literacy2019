@@ -4,8 +4,8 @@
     padding-top: 35px;
     padding-bottom: 120px;
     box-sizing: border-box;
-    background-image: url(../image/bg.png);
-    background-size: cover;
+    /* background-image: url(../image/bg.png);
+    background-size: cover; */
 }
 
 main {
