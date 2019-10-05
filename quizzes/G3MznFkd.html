@@ -22,7 +22,7 @@
         <main>
             <h1>
                 <!-- クイズタイトル -->
-                例題１
+                Ｑ３
                 <!-- クイズのタイトルここまで -->
             </h1>
 
@@ -32,35 +32,66 @@
             <h2>回路図</h2>
             <p>
                 まずは回路を組みましょう。<br>
-                問題に正解すると光るよ！<br>
+                問題に正解するとカラフルに点滅するよ！<br>
+                間違えても光るけど答えに近くなるほど明るい色になるよ！<br>
                 (obnizがonlineじゃないと問題が答えられません。)
             </p>
             <!-- 回路図のファイル名とタイトルを記入 -->
-            <img src="../image/g3_b.png" title="ブレッドボード">
-            <img src="../image/g3_c.png" title="回路図">
+            <img src="../image/g3_b.png" title="Lチカのブレッドボード">
+            <img src="../image/g3_c.png" title="Lチカの回路図">
 
             <h2>問題</h2>
             <p>
                 <!-- ここに問題を書く -->
-                岐阜高専のスクールカラーは
-                <span style="font-size: 16pt; color: rgb(0, 167, 123)">みどり色</span>
-                である。
-                <div id="maru-batsu">
-                    <button type="button" class="btn btn-primary" id="true">○</button>
-                    <button type="button" class="btn btn-danger" id="false">×</button>
-                </div>
-                <!-- ここまで問題 -->
+                パソコンの色は
+                <span style=" color: rgb(255,0,0)">Red（赤）</span>
+                、
+                <span style=" color: rgb(0,255,0)">Green（緑）</span>
+                、
+                <span style=" color: rgb(0,0,255)">Blue（青）</span>
+                の混色によって表現されています。<br>
+                それぞれ明るさや鮮やかさを数字によって表すことができますが、その数字は何段階まであるでしょう？
+
+                <h3>ヒント</h3>
+                答えは3ケタの数字だよ！<br>
+                その3ケタの数字は下の3つの問題を解いて出てきた数字を並べ替えると出てくるよ！<br>
+                Ｑ1:3×27÷9-7<br>
+                Ｑ2:10，65，2190の3つの数を1以外の整数で割り切れる共通の整数<br>
+                Ｑ3:縦3㎝、横9㎝で体積が162㎤の直方体があります。その高さは何㎝でしょう？<br>
             </p>
+
+
+            <form name="form1">
+                <select name="val">
+                    <option value="562">562</option>
+                    <option value="625">625</option>
+                    <option value="526">526</option>
+                    <option value="256">256</option>
+                    <option value="652">652</option>
+                    <option value="265">265</option>
+                </select>
+            </form>
+
+            <button type="button" class="btn btn-primary" id="answer-btn">答える！</button>
+
+            <!-- ここまで問題 -->
 
             <span id="answer" style="visibility: hidden">
                 <h2>解説</h2>
                 <p>
                     <!-- ここに解説を書く -->
-                    岐阜高専のスクールカラーは
-                    <span style="font-size: 16pt; color: rgb(179, 66, 74)">えんじ色</span>
+                    その数字は......
+                    <span style="font-size: 16pt; color: orange;">256段階</span>
                     だよ！<br>
-                    初代校長先生の母校の壁の色なんだって！
+                    これが赤、青、緑それぞれにあるから、色の種類の合計は256×256×256で<br>
+                    <span style="font-size: 16pt; color: orange;">16,777,216通り</span>
+                    ととてもたくさんあるんだよ！<br>
                     <!-- ここまで解説 -->
+                </p>
+                <p>
+                    3つめの鍵は
+                    <span id="key">84</span>
+                    だよ！
                 </p>
             </span>
         </main>
@@ -81,29 +112,47 @@
         var obniz = new Obniz("OBNIZ_ID_HERE");
         obniz.onconnect = async function () {
             // LEDを用意する
-            var led = obniz.wired("LED", { anode: 0, cathode: 1 });
-            led.off();
-            // 正解のボタンを押すと光る
-            $("#false").click(async function () {
-                // 3回ピカピカする
-                var count = 3;
-                while (count > 0) {
-                    console.log(count);
-                    // 接続が切れたら抜ける
-                    if (obniz.connectionState != "connected") {
-                        console.log('connection close!');
-                        break;
-                    }
-                    led.on();
-                    await obniz.wait(250);
-                    led.off();
-                    await obniz.wait(250);
-                    // カウントダウン
-                    count -= 1;
+            var led = obniz.wired("FullColorLED", { r: 3, g: 0, b: 1, common: 2, commonType: 'anode_common' });
+            //ボタンを押すと光る
+            $("#answer-btn").click(async function () {
+                //テキストボックスを取得
+                const val = document.form1.val;
+                const num = val.selectedIndex;
+                const value = val.options[num].value;
+                //答えが不正解
+                if (value == 652) {
+                    console.log("652");
+                    led.rgb(0, 0, 128);
+                    await obniz.wait(5000);
+
+                } else if (value == 625) {
+                    led.rgb(0, 128, 0);
+                    await obniz.wait(5000);
+
+                } else if (value == 562) {
+                    led.rgb(0, 0, 255);
+                    await obniz.wait(5000);
+
+                } else if (value == 526) {
+                    led.rgb(255, 0, 0);
+                    await obniz.wait(5000);
+
+                } else if (value == 265) {
+                    led.rgb(255, 255, 0);
+                    await obniz.wait(5000);
+
                 }
-                // 終わったら解説を表示する
-                const answer = document.getElementById("answer");
-                answer.style.visibility = "visible";
+                //答えが正解なら
+                else if (value == 256) {
+                    led.gradation(3000);
+                    await obniz.wait(5000);
+                    led.stopgradation();
+
+                    // 終わったら解説を表示する
+                    const answer = document.getElementById("answer");
+                    answer.style.visibility = "visible";
+                }
+
             });
         }
     </script>
