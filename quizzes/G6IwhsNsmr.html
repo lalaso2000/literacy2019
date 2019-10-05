@@ -38,6 +38,9 @@
                 <div id="hosoku">
                     (※obnizがonlineじゃないと問題が答えられません！)
                 </div>
+                <div>
+                    <button type="button" class="btn btn-primary" id="connect">obnizを接続</button>
+                </div>
             </p>
             <!-- 回路図のファイル名とタイトルを記入 -->
             <img src="../image/g6_b.png" title="距離センサとスイッチのブレッドボード">
@@ -118,71 +121,73 @@
         console.log('console check.');
         // obnizに接続
         // OBNIZ_ID_HEREにしておくと実行時にIDを聞いてくれる
-        var obniz = new Obniz("OBNIZ_ID_HERE");
-        obniz.onconnect = async function () {
-            var sensor = obniz.wired("GP2Y0A21YK0F", { vcc: 0, gnd: 1, signal: 2 });
-            var ans = new String();
+        $("#connect").click(function () {
+            var obniz = new Obniz("OBNIZ_ID_HERE");
+            obniz.onconnect = async function () {
+                var sensor = obniz.wired("GP2Y0A21YK0F", { vcc: 0, gnd: 1, signal: 2 });
+                var ans = new String();
 
-            while (1) {
-                var val = await sensor.getWait();
-                console.log("distance " + val + "mm");
-                await obniz.wait(1000);
+                while (1) {
+                    var val = await sensor.getWait();
+                    console.log("distance " + val + "mm");
+                    await obniz.wait(1000);
 
-                var word = new String();
+                    var word = new String();
 
-                if (val <= 50) { word = "A"; }
-                else if (val <= 60) { word = "B" }
-                else if (val <= 70) { word = "C" }
-                else if (val <= 80) { word = "D" }
-                else if (val <= 90) { word = "E" }
-                else if (val <= 100) { word = "F" }
-                else if (val <= 111) { word = "G" }
-                else if (val <= 120) { word = "H" }
-                else if (val <= 130) { word = "I" }
-                else if (val <= 140) { word = "J" }
-                else if (val <= 150) { word = "K" }
-                else if (val <= 160) { word = "L" }
-                else if (val <= 170) { word = "M" }
-                else if (val <= 181) { word = "N" }
-                else if (val <= 190) { word = "O" }
-                else if (val <= 200) { word = "P" }
-                else if (val <= 210) { word = "Q" }
-                else if (val <= 220) { word = "R" }
-                else if (val <= 231) { word = "S" }
-                else if (val <= 240) { word = "T" }
-                else if (val <= 250) { word = "U" }
-                else if (val <= 260) { word = "V" }
-                else if (val <= 270) { word = "W" }
-                else if (val <= 280) { word = "X" }
-                else if (val <= 290) { word = "Y" }
-                else { word = "Z" }
+                    if (val <= 50) { word = "A"; }
+                    else if (val <= 60) { word = "B" }
+                    else if (val <= 70) { word = "C" }
+                    else if (val <= 80) { word = "D" }
+                    else if (val <= 90) { word = "E" }
+                    else if (val <= 100) { word = "F" }
+                    else if (val <= 111) { word = "G" }
+                    else if (val <= 120) { word = "H" }
+                    else if (val <= 130) { word = "I" }
+                    else if (val <= 140) { word = "J" }
+                    else if (val <= 150) { word = "K" }
+                    else if (val <= 160) { word = "L" }
+                    else if (val <= 170) { word = "M" }
+                    else if (val <= 181) { word = "N" }
+                    else if (val <= 190) { word = "O" }
+                    else if (val <= 200) { word = "P" }
+                    else if (val <= 210) { word = "Q" }
+                    else if (val <= 220) { word = "R" }
+                    else if (val <= 231) { word = "S" }
+                    else if (val <= 240) { word = "T" }
+                    else if (val <= 250) { word = "U" }
+                    else if (val <= 260) { word = "V" }
+                    else if (val <= 270) { word = "W" }
+                    else if (val <= 280) { word = "X" }
+                    else if (val <= 290) { word = "Y" }
+                    else { word = "Z" }
 
-                obniz.display.clear();
-                var button = obniz.wired("Button", { signal: 4, gnd: 5 });
-                var button2 = obniz.wired("Button", { signal: 6, gnd: 7 });
-                button.onchange = function (pressed) {
-                    if (pressed == true) {
-                        console.log("input");
-                        ans += word;
+                    obniz.display.clear();
+                    var button = obniz.wired("Button", { signal: 4, gnd: 5 });
+                    var button2 = obniz.wired("Button", { signal: 6, gnd: 7 });
+                    button.onchange = function (pressed) {
+                        if (pressed == true) {
+                            console.log("input");
+                            ans += word;
+                        }
+                    };
+                    button2.onchange = function (pressed) {
+                        if (pressed == true) {
+                            console.log("delete");
+                            ans = ans.slice(0, -1);
+                        }
+                    };
+                    obniz.display.print(word);
+                    obniz.display.print(ans);
+
+                    document.getElementById('edit_area').textContent = ans;
+
+                    if (ans == "GNSS") {
+                        const answer = document.getElementById("answer");
+                        answer.style.visibility = "visible";
                     }
-                };
-                button2.onchange = function (pressed) {
-                    if (pressed == true) {
-                        console.log("delete");
-                        ans = ans.slice(0, -1);
-                    }
-                };
-                obniz.display.print(word);
-                obniz.display.print(ans);
-
-                document.getElementById('edit_area').textContent = ans;
-
-                if (ans == "GNSS") {
-                    const answer = document.getElementById("answer");
-                    answer.style.visibility = "visible";
                 }
-            }
-        };
+            };
+        });
     </script>
 
 </body>

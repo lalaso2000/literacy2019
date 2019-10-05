@@ -33,7 +33,8 @@
             <h2>回路図</h2>
             <p>
                 まずは回路を組みましょう。<br>
-                (obnizがonlineじゃないと問題が答えられません。)
+                (obnizがonlineじゃないと問題が答えられません。)<br>
+                <button type="button" class="btn btn-primary" id="connect">obnizを接続</button>
             </p>
             <!-- 回路図のファイル名とタイトルを記入 -->
             <img src="../image/g5_b.png" width="420" title="サーボのブレッドボード">
@@ -51,16 +52,16 @@
                 <div id="btn-ans">
                     <label><input type="radio" class="check" name="servo" id="select_servo_ido" checked> 緯度
                         (北緯)</label><br>
-                    <button type="button" class="btn btn-danger" id="ido_dec">減らす</button>
+                    <button type="button" class="btn btn-danger g5-btn" id="ido_dec">減らす</button>
                     <div id="display_ido" class="pad">0</div>
-                    <button type="button" class="btn btn-primary" id="ido_inc">増やす</button>
+                    <button type="button" class="btn btn-primary g5-btn" id="ido_inc">増やす</button>
                 </div>
                 <!-- 経度を合わせる表示 -->
                 <div id="btn-ans">
                     <label><input type="radio" class="check" name="servo" id="select_servo_keido"> 経度 (東経)</label><br>
-                    <button type="button" class="btn btn-danger" id="keido_dec">減らす</button>
+                    <button type="button" class="btn btn-danger g5-btn" id="keido_dec">減らす</button>
                     <div id="display_keido" class="pad">0</div>
-                    <button type="button" class="btn btn-primary" id="keido_inc">増やす</button>
+                    <button type="button" class="btn btn-primary g5-btn" id="keido_inc">増やす</button>
                 </div>
                 <!-- ここまで問題 -->
             </p>
@@ -150,48 +151,50 @@
             console.log('console check.');
             // obnizに接続
             // OBNIZ_ID_HEREにしておくと実行時にIDを聞いてくれる
-            var obniz = new Obniz("OBNIZ_ID_HERE");
-            obniz.onconnect = async function () {
+            $("#connect").click(function () {
+                var obniz = new Obniz("OBNIZ_ID_HERE");
+                obniz.onconnect = async function () {
 
 
-                // サーボを用意する
-                var servoMotor = obniz.wired("ServoMotor", { signal: 0, vcc: 1, gnd: 2 });
-                var servo_angle = 0;
-                var angle_rate = 0;
-                servoMotor.range = { min: 0.6, max: 2.3 };
-                servoMotor.angle(0);
-                $(".btn").click(async function () {
-                    angle_rate = 0;
-                    if (servo_ido.checked) {
-                        if (count_ido > 35) {
-                            angle_rate = (35 - count_ido) * (90 / 55);
+                    // サーボを用意する
+                    var servoMotor = obniz.wired("ServoMotor", { signal: 0, vcc: 1, gnd: 2 });
+                    var servo_angle = 0;
+                    var angle_rate = 0;
+                    servoMotor.range = { min: 0.6, max: 2.3 };
+                    servoMotor.angle(0);
+                    $(".btn").click(async function () {
+                        angle_rate = 0;
+                        if (servo_ido.checked) {
+                            if (count_ido > 35) {
+                                angle_rate = (35 - count_ido) * (90 / 55);
+                            }
+                            else if (count_ido < 35) {
+                                angle_rate = (35 - count_ido) * (90 / 35);
+                            }
+                            servo_angle = 90 - angle_rate;
+                            servoMotor.angle(servo_angle);
                         }
-                        else if (count_ido < 35) {
-                            angle_rate = (35 - count_ido) * (90 / 35);
+                        if (servo_keido.checked) {
+                            if (count_keido > 136) {
+                                angle_rate = (136 - count_keido) * (90 / 44);
+                            }
+                            else if (count_keido < 136) {
+                                angle_rate = (136 - count_keido) * (90 / 136);
+                            }
+                            servo_angle = 90 - angle_rate;
+                            console.log("angle", servo_angle);
+                            servoMotor.angle(servo_angle);
                         }
-                        servo_angle = 90 - angle_rate;
-                        servoMotor.angle(servo_angle);
-                    }
-                    if (servo_keido.checked) {
-                        if (count_keido > 136) {
-                            angle_rate = (136 - count_keido) * (90 / 44);
-                        }
-                        else if (count_keido < 136) {
-                            angle_rate = (136 - count_keido) * (90 / 136);
-                        }
-                        servo_angle = 90 - angle_rate;
-                        console.log("angle", servo_angle);
-                        servoMotor.angle(servo_angle);
-                    }
 
-                    if (count_ido == 35 && count_keido == 136) {
-                        const answer = document.getElementById("answer");
-                        answer.style.visibility = "visible";
-                    }
-                });
+                        if (count_ido == 35 && count_keido == 136) {
+                            const answer = document.getElementById("answer");
+                            answer.style.visibility = "visible";
+                        }
+                    });
 
 
-            }
+                }
+            });
         };
     </script>
 </body>

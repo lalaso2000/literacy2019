@@ -34,7 +34,8 @@
                 まずは回路を組みましょう。<br>
                 問題に正解するとカラフルに点滅するよ！<br>
                 間違えても光るけど答えに近くなるほど明るい色になるよ！<br>
-                (obnizがonlineじゃないと問題が答えられません。)
+                (obnizがonlineじゃないと問題が答えられません。)<br>
+                <button type="button" class="btn btn-primary" id="connect">obnizを接続</button>
             </p>
             <!-- 回路図のファイル名とタイトルを記入 -->
             <img src="../image/g3_b.png" title="Lチカのブレッドボード">
@@ -109,52 +110,54 @@
         console.log('console check.');
         // obnizに接続
         // OBNIZ_ID_HEREにしておくと実行時にIDを聞いてくれる
-        var obniz = new Obniz("OBNIZ_ID_HERE");
-        obniz.onconnect = async function () {
-            // LEDを用意する
-            var led = obniz.wired("FullColorLED", { r: 3, g: 0, b: 1, common: 2, commonType: 'anode_common' });
-            //ボタンを押すと光る
-            $("#answer-btn").click(async function () {
-                //テキストボックスを取得
-                const val = document.form1.val;
-                const num = val.selectedIndex;
-                const value = val.options[num].value;
-                //答えが不正解
-                if (value == 652) {
-                    console.log("652");
-                    led.rgb(0, 0, 128);
-                    await obniz.wait(5000);
+        $("#connect").click(function () {
+            var obniz = new Obniz("OBNIZ_ID_HERE");
+            obniz.onconnect = async function () {
+                // LEDを用意する
+                var led = obniz.wired("FullColorLED", { r: 3, g: 0, b: 1, common: 2, commonType: 'anode_common' });
+                //ボタンを押すと光る
+                $("#answer-btn").click(async function () {
+                    //テキストボックスを取得
+                    const val = document.form1.val;
+                    const num = val.selectedIndex;
+                    const value = val.options[num].value;
+                    //答えが不正解
+                    if (value == 652) {
+                        console.log("652");
+                        led.rgb(0, 0, 128);
+                        await obniz.wait(5000);
 
-                } else if (value == 625) {
-                    led.rgb(0, 128, 0);
-                    await obniz.wait(5000);
+                    } else if (value == 625) {
+                        led.rgb(0, 128, 0);
+                        await obniz.wait(5000);
 
-                } else if (value == 562) {
-                    led.rgb(0, 0, 255);
-                    await obniz.wait(5000);
+                    } else if (value == 562) {
+                        led.rgb(0, 0, 255);
+                        await obniz.wait(5000);
 
-                } else if (value == 526) {
-                    led.rgb(255, 0, 0);
-                    await obniz.wait(5000);
+                    } else if (value == 526) {
+                        led.rgb(255, 0, 0);
+                        await obniz.wait(5000);
 
-                } else if (value == 265) {
-                    led.rgb(255, 255, 0);
-                    await obniz.wait(5000);
+                    } else if (value == 265) {
+                        led.rgb(255, 255, 0);
+                        await obniz.wait(5000);
 
-                }
-                //答えが正解なら
-                else if (value == 256) {
-                    led.gradation(3000);
-                    await obniz.wait(5000);
-                    led.stopgradation();
+                    }
+                    //答えが正解なら
+                    else if (value == 256) {
+                        led.gradation(3000);
+                        await obniz.wait(5000);
+                        led.stopgradation();
 
-                    // 終わったら解説を表示する
-                    const answer = document.getElementById("answer");
-                    answer.style.visibility = "visible";
-                }
+                        // 終わったら解説を表示する
+                        const answer = document.getElementById("answer");
+                        answer.style.visibility = "visible";
+                    }
 
-            });
-        }
+                });
+            }
+        });
     </script>
 </body>
 

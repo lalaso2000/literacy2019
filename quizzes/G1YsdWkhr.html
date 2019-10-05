@@ -33,7 +33,8 @@
             <p>
                 まずは回路を組みましょう。<br>
                 正しいものを選んでいくとランプがつくよ！正解の場合は赤が不正解の場合は青がつくよ！<br>
-                (obnizがonlineじゃないと問題が答えられません。)
+                (obnizがonlineじゃないと問題が答えられません。)<br>
+                <button type="button" class="btn btn-primary" id="connect">obnizを接続</button>
             </p>
             <!-- 回路図のファイル名とタイトルを記入 -->
             <img src="../image/g1_b.png" title="ブレッドボード">
@@ -104,82 +105,81 @@
         console.log('console check.');
         // obnizに接続
         // OBNIZ_ID_HEREにしておくと実行時にIDを聞いてくれる
-        var obniz = new Obniz("OBNIZ_ID_HERE");
-        obniz.onconnect = async function () {
-            // LEDを用意する
-            var led1 = obniz.wired("LED", { anode: 1, cathode: 0 });
-            var led2 = obniz.wired("LED", { anode: 2, cathode: 0 });
-            var led3 = obniz.wired("LED", { anode: 3, cathode: 0 });
-            var led4 = obniz.wired("LED", { anode: 4, cathode: 0 });
-            led1.off();
-            led2.off();
-            led3.on();
-            led4.off();
-            // 正解のボタンを押すと緑が光る
-            var flagA = false;
-            var flagB = false;
-            $("#trueA").click(async function () {
-                // 3回ピカピカする
-                var countA = 3;
-                while (countA > 0) {
-                    console.log(countA);
-                    // 接続が切れたら抜ける
-                    if (obniz.connectionState != "connected") {
-                        console.log('connection close!');
-                        break;
+        var obniz;
+        $("#connect").click(function () {
+            obniz = new Obniz("OBNIZ_ID_HERE");
+            obniz.onconnect = async function () {
+                // LEDを用意する
+                var led1 = obniz.wired("LED", { anode: 1, cathode: 0 });
+                var led2 = obniz.wired("LED", { anode: 2, cathode: 0 });
+                var led3 = obniz.wired("LED", { anode: 3, cathode: 0 });
+                var led4 = obniz.wired("LED", { anode: 4, cathode: 0 });
+                led1.off();
+                led2.off();
+                led3.on();
+                led4.off();
+                // 正解のボタンを押すと緑が光る
+                var flagA = false;
+                var flagB = false;
+                $("#trueA").click(async function () {
+                    // 3回ピカピカする
+                    var countA = 3;
+                    while (countA > 0) {
+                        console.log(countA);
+                        // 接続が切れたら抜ける
+                        if (obniz.connectionState != "connected") {
+                            console.log('connection close!');
+                            break;
+                        }
+                        led1.on();
+                        await obniz.wait(250);
+                        led1.off();
+                        await obniz.wait(250);
+                        // カウントダウン
+                        countA -= 1;
                     }
                     led1.on();
-                    await obniz.wait(250);
-                    led1.off();
-                    await obniz.wait(250);
-                    // カウントダウン
-                    countA -= 1;
-                }
-                led1.on();
-                flagA = true;
-                if (flagA == true && flagB == true) {
-                    // 終わったら解説を表示する
-                    led3.off();
-                    led4.on();
-                    const answer = document.getElementById("answer");
-                    answer.style.visibility = "visible";
-                }
-            });
+                    flagA = true;
+                    if (flagA == true && flagB == true) {
+                        // 終わったら解説を表示する
+                        led3.off();
+                        led4.on();
+                        const answer = document.getElementById("answer");
+                        answer.style.visibility = "visible";
+                    }
+                });
 
-            $("#trueB").click(async function () {
-                // 3回ピカピカする
-                var countA = 3;
-                while (countA > 0) {
-                    console.log(countA);
-                    // 接続が切れたら抜ける
-                    if (obniz.connectionState != "connected") {
-                        console.log('connection close!');
-                        break;
+                $("#trueB").click(async function () {
+                    // 3回ピカピカする
+                    var countA = 3;
+                    while (countA > 0) {
+                        console.log(countA);
+                        // 接続が切れたら抜ける
+                        if (obniz.connectionState != "connected") {
+                            console.log('connection close!');
+                            break;
+                        }
+                        led2.on();
+                        await obniz.wait(250);
+                        led2.off();
+                        await obniz.wait(250);
+                        // カウントダウン
+                        countA -= 1;
                     }
                     led2.on();
-                    await obniz.wait(250);
-                    led2.off();
-                    await obniz.wait(250);
-                    // カウントダウン
-                    countA -= 1;
-                }
-                led2.on();
 
 
-                flagB = true;
-                if (flagA == true && flagB == true) {
-                    // 終わったら解説を表示する
-                    led3.off();
-                    led4.on();
-                    const answer = document.getElementById("answer");
-                    answer.style.visibility = "visible";
-                }
-            });
-
-
-
-        };
-
+                    flagB = true;
+                    if (flagA == true && flagB == true) {
+                        // 終わったら解説を表示する
+                        led3.off();
+                        led4.on();
+                        const answer = document.getElementById("answer");
+                        answer.style.visibility = "visible";
+                    }
+                });
+            };
+        });
     </script>
 </body>
 
