@@ -39,47 +39,56 @@
             <img src="../image/g1_b.png" title="ブレッドボード">
             <img src="../image/g1_c.png" title="回路図">
 
-            <h2>問題</h2>
-            <p>
-                <!-- ここに問題を書く -->
-                IoTのIは何の略？正解だと
-                <span style="font-size: 16pt; color: rgb(0, 167, 123)">みどり色</span>
-                が光るよ
-                <div id="sentaku">
+            <div id="question">
+                <h2>問題</h2>
+                <p style="margin-bottom: 2pt">
+                    <!-- ここに問題を書く -->
+                    IoTのIは何の略？正解だと
+                    <span style="font-size: 16pt; color: rgb(0, 167, 123)">みどり色</span>
+                    が光るよ
+                </p>
+                <div id="sentaku" style="margin-bottom: 16pt">
                     <button type="button" class="btn btn-danger" id="trueA">Internet(インターネット)</button>
                     <button type="button" class="btn btn-danger" id="false1">Iterhon(インターホン)</button>
                     <button type="button" class="btn btn-danger" id="false2">Ianman(アイアンマン)</button>
                 </div>
 
-                <p>
-
+                <p style="margin-bottom: 2pt">
+                    IoTのTは何の略？正解だと
+                    <span style="font-size: 16pt; color: rgb(0, 0, 0)">白色</span>
+                    が光るよ
                 </p>
-
-                IoTのTは何の略？正解だと
-                <span style="font-size: 16pt; color: rgb(0, 0, 0)">白色</span>
-                が光るよ
-                <div id="sentaku">
+                <div id="sentaku" style="margin-bottom: 16pt">
                     <button type="button" class="btn btn-danger" id="false3">Thanks(ありがとう)</button>
                     <button type="button" class="btn btn-danger" id="false4">Thursday(木曜日)</button>
                     <button type="button" class="btn btn-danger" id="trueB">Things(もの)</button>
                 </div>
 
-                両方あってると青のランプが光るよ
-
-
-
+                <p>
+                    両方あってると
+                    <span style="font-size: 16pt; color: blue">青色</span>
+                    のランプが光るよ
+                </p>
                 <!-- ここまで問題 -->
-            </p>
+            </div>
 
-            <span id="answer" style="visibility: hidden">
+
+            <div id="answer" style="visibility: hidden">
                 <h2>解説</h2>
                 <p>
                     <!-- ここに解説を書く -->
-                    IoTはInternet of Thingsの略で、
-                    日本語にするともののインターネットだよ！<br>
+                    IoTは
+                    <span style="font-size: 16pt; color: blue">Internet of Things</span>
+                    の略で、
+                    日本語にすると「もののインターネット」っていう意味になるよ！
                     <!-- ここまで解説 -->
                 </p>
-            </span>
+                <p>
+                    1つ目の鍵は
+                    <span id="key">73</span>
+                    だよ！
+                </p>
+            </div>
         </main>
 
         <footer>

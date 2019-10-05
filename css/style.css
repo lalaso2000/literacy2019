@@ -81,3 +81,11 @@ footer{
     margin: 4px;
     padding: 4px;
 }
+
+#key{
+    margin-left: 2pt;
+    margin-right: 2pt;
+    font-size: 16pt;
+    color: red;
+    font-weight: bold;
+}
