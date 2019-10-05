@@ -22,7 +22,7 @@
         <main>
             <h1>
                 <!-- クイズタイトル -->
-                例題１
+                GPS
                 <!-- クイズのタイトルここまで -->
             </h1>
 
@@ -31,37 +31,77 @@
 
             <h2>回路図</h2>
             <p>
-                まずは回路を組みましょう。<br>
-                問題に正解すると光るよ！<br>
-                (obnizがonlineじゃないと問題が答えられません。)
+                <div id="explain">
+                    まずは回路を組みましょう。
+                    距離センサを使って、文字を入力して答えてね！
+                </div>
+                <div id="hosoku">
+                    (※obnizがonlineじゃないと問題が答えられません！)
+                </div>
             </p>
             <!-- 回路図のファイル名とタイトルを記入 -->
-            <img src="../image/g6_b.png" title="ブレッドボード">
-            <img src="../image/g6_c.png" title="回路図">
+            <img src="../image/g6_b.png" title="距離センサとスイッチのブレッドボード">
+            <img src="../image/g6_c.png" title="距離センサとスイッチの回路図">
 
             <h2>問題</h2>
             <p>
                 <!-- ここに問題を書く -->
-                岐阜高専のスクールカラーは
-                <span style="font-size: 16pt; color: rgb(0, 167, 123)">みどり色</span>
-                である。
-                <div id="maru-batsu">
-                    <button type="button" class="btn btn-primary" id="true">○</button>
-                    <button type="button" class="btn btn-danger" id="false">×</button>
+                <div class="one">
+                    GPSは「
+                    <span style="color: rgb(255,0,0)">G</span>
+                    lobal&nbsp;
+                    <span style="color: rgb(255,0,0)">P</span>
+                    ositioning&nbsp;
+                    <span style="color: rgb(255,0,0)">S</span>
+                    ystem」というアメリカのシステムの略語ですが、その一般名称は何でしょう？<br>
+                    (※略語で答えてね！)<br>
+                    <br>
                 </div>
-                <!-- ここまで問題 -->
+                <div class="two">
+                    <!--<span style="font-size: 16pt; color: rgb(RedValue, GreenValue, BlueValue)">word</span>-->
+                    距離センサに手をかざすと、アルファベットが変わるよ！
+                    近い方からA、B、C…Zに対応してるんだ。<br>
+                    スイッチで入力と削除ができるから、距離を変えて答えのアルファベット4文字を入力してみよう！<br>
+                    <br>
+                    難しいから、みんなで協力してやってみてね！！<br>
+                    <br>
+                    入力した文字は↓に表示されるよ。
+                    <B>
+                        <div id="edit_area"></div>
+                    </B>
+
+                    <!-- ここまで問題 -->
             </p>
 
+            <!--obnizで距離を測る-->
+            <!-- <div id="obniz-debug"></div> -->
+            <!--<h1>距離を測ります</h1>-->
+
+
+            <!--解説-->
             <span id="answer" style="visibility: hidden">
                 <h2>解説</h2>
                 <p>
                     <!-- ここに解説を書く -->
-                    岐阜高専のスクールカラーは
-                    <span style="font-size: 16pt; color: rgb(179, 66, 74)">えんじ色</span>
-                    だよ！<br>
-                    初代校長先生の母校の壁の色なんだって！
+                    <div class="Explanation">
+                        おめでとう！！
+                        GPSの一般名称は
+                        <span style="font-size: 16pt; color: rgb(179, 66, 74)">GNSS</span>
+                        <!--えんじ色-->
+                        だよ！<br>
+                        「<span style="color: rgb(255,0,0)">G</span>lobal
+                        <span style="color: rgb(255,0,0)">N</span>avigation
+                        <span style="color: rgb(255,0,0)">S</span>atelite
+                        <span style="color: rgb(255,0,0)">S</span>ystem」の略だネ。
+                    </div>
+                </p>
+                <p>
+                    <div id="Bitches">
+                        でも、みんなが「GPS」って言うせいで、GPSのほうが有名になっちゃってるんだよね…。かわいそう。
+                    </div>
                     <!-- ここまで解説 -->
                 </p>
+                <p>この問題の鍵は<span id="key">83</span> だよ！</p>
             </span>
         </main>
 
@@ -80,33 +120,71 @@
         // OBNIZ_ID_HEREにしておくと実行時にIDを聞いてくれる
         var obniz = new Obniz("OBNIZ_ID_HERE");
         obniz.onconnect = async function () {
-            // LEDを用意する
-            var led = obniz.wired("LED", { anode: 0, cathode: 1 });
-            led.off();
-            // 正解のボタンを押すと光る
-            $("#false").click(async function () {
-                // 3回ピカピカする
-                var count = 3;
-                while (count > 0) {
-                    console.log(count);
-                    // 接続が切れたら抜ける
-                    if (obniz.connectionState != "connected") {
-                        console.log('connection close!');
-                        break;
+            var sensor = obniz.wired("GP2Y0A21YK0F", { vcc: 0, gnd: 1, signal: 2 });
+            var ans = new String();
+
+            while (1) {
+                var val = await sensor.getWait();
+                console.log("distance " + val + "mm");
+                await obniz.wait(1000);
+
+                var word = new String();
+
+                if (val <= 50) { word = "A"; }
+                else if (val <= 60) { word = "B" }
+                else if (val <= 70) { word = "C" }
+                else if (val <= 80) { word = "D" }
+                else if (val <= 90) { word = "E" }
+                else if (val <= 100) { word = "F" }
+                else if (val <= 111) { word = "G" }
+                else if (val <= 120) { word = "H" }
+                else if (val <= 130) { word = "I" }
+                else if (val <= 140) { word = "J" }
+                else if (val <= 150) { word = "K" }
+                else if (val <= 160) { word = "L" }
+                else if (val <= 170) { word = "M" }
+                else if (val <= 181) { word = "N" }
+                else if (val <= 190) { word = "O" }
+                else if (val <= 200) { word = "P" }
+                else if (val <= 210) { word = "Q" }
+                else if (val <= 220) { word = "R" }
+                else if (val <= 231) { word = "S" }
+                else if (val <= 240) { word = "T" }
+                else if (val <= 250) { word = "U" }
+                else if (val <= 260) { word = "V" }
+                else if (val <= 270) { word = "W" }
+                else if (val <= 280) { word = "X" }
+                else if (val <= 290) { word = "Y" }
+                else { word = "Z" }
+
+                obniz.display.clear();
+                var button = obniz.wired("Button", { signal: 4, gnd: 5 });
+                var button2 = obniz.wired("Button", { signal: 6, gnd: 7 });
+                button.onchange = function (pressed) {
+                    if (pressed == true) {
+                        console.log("input");
+                        ans += word;
                     }
-                    led.on();
-                    await obniz.wait(250);
-                    led.off();
-                    await obniz.wait(250);
-                    // カウントダウン
-                    count -= 1;
+                };
+                button2.onchange = function (pressed) {
+                    if (pressed == true) {
+                        console.log("delete");
+                        ans = ans.slice(0, -1);
+                    }
+                };
+                obniz.display.print(word);
+                obniz.display.print(ans);
+
+                document.getElementById('edit_area').textContent = ans;
+
+                if (ans == "GNSS") {
+                    const answer = document.getElementById("answer");
+                    answer.style.visibility = "visible";
                 }
-                // 終わったら解説を表示する
-                const answer = document.getElementById("answer");
-                answer.style.visibility = "visible";
-            });
-        }
+            }
+        };
     </script>
+
 </body>
 
 </html>
