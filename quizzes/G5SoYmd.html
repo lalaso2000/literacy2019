@@ -157,7 +157,7 @@
 
 
                     // サーボを用意する
-                    var servoMotor = obniz.wired("ServoMotor", { signal: 0, vcc: 1, gnd: 2 });
+                    var servoMotor = obniz.wired("ServoMotor", { signal: 1, vcc: 2, gnd: 0 });
                     var servo_angle = 0;
                     var angle_rate = 0;
                     servoMotor.range = { min: 0.6, max: 2.3 };
